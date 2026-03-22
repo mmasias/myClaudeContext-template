@@ -1,10 +1,10 @@
 # Los tres problemas de la memoria de Claude Code
 
-Este repositorio nació con un objetivo concreto: resolver el problema de sincronizar el contexto de Claude Code entre máquinas. Git, symlinks, un script de setup. Algo técnico y delimitado.
+Este repositorio nació con un objetivo concreto: resolver el problema de sincronizar el contexto de Claude Code entre máquinas usanto Git, symlinks, un script de setup... Algo más bien técnico y delimitado.
 
-Al documentarlo, emergió algo que no estaba en el plan original. El intento de resolver la sincronización obligó a entender cómo funciona la memoria de Claude Code. Y entender cómo funciona llevó a identificar no uno sino tres modos distintos en que esa memoria puede fallar. Tres problemas con naturaleza diferente, diagnóstico diferente y solución diferente.
+Pero al documentarlo emergió algo que no estaba en el plan original. El intento de resolver la sincronización requería a entender cómo funciona la memoria de Claude Code. Y al entender cómo funciona se pudo identificar no uno sino tres modos distintos en que esa memoria puede fallar. Tres problemas con naturaleza diferente, diagnóstico diferente y solución diferente.
 
-El tercero, en particular, responde una pregunta que el debate sobre herramientas de IA suele dejar en abstracto: dónde entra el humano. La respuesta que emerge no es "como supervisor" ni "como safety net". Es más estructural que eso. Pero llegar a ella requiere recorrer los tres problemas en orden.
+El tercero además permite abordar algo que el debate sobre herramientas de IA suele dejar en abstracto: dónde entra el humano. La respuesta que emerge no es como "supervisor" / "validador" / "red de seguridad". Es más estructural que eso y requiere entender los tres problemas en orden.
 
 ## La taxonomía
 
