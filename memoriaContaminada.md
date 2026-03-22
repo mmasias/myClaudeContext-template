@@ -6,9 +6,9 @@ Claude Code tiene memoria. No en el sentido metafórico de "contexto de conversa
 
 Trasteando la arquitectura detrás de esa memoria aparecen sorpresas que —si no se gestionan adecuadamente— pueden derivar en **memoria contaminada**: el modelo operando con recuerdos de un proyecto anterior que, por accidente arquitectónico, comparte identidad con el actual.
 
-||
-|-|
-<sub>Un ejemplo ocurrido durante la elaboración de este artículo: se clonó el repositorio template de [ibuprofenofernandez/myClaudeContext-template](https://github.com/ibuprofenofernandez/myClaudeContext-template) para trabajar con él. Después se hizo un fork en [mmasias/myClaudeContext-template](https://github.com/mmasias/myClaudeContext-template), se borró el clone original del disco y se clonó el fork en el mismo path. Claude Code no se enteró del cambio. El path en disco era idéntico, así que siguió usando la misma carpeta de memoria, con el mismo contexto acumulado, como si nada hubiera ocurrido. Dos repositorios distintos, un solo "recuerdo".</sub>
+> ||
+> |-|
+> <sub>*Un ejemplo ocurrido durante la elaboración de este artículo: se clonó el repositorio template de [ibuprofenofernandez/myClaudeContext-template](https://github.com/ibuprofenofernandez/myClaudeContext-template) para trabajar con él. Después se hizo un fork en [mmasias/myClaudeContext-template](https://github.com/mmasias/myClaudeContext-template), se borró el clone original del disco y se clonó el fork en el mismo path. Claude Code no se enteró del cambio. El path en disco era idéntico, así que siguió usando la misma carpeta de memoria, con el mismo contexto acumulado, como si nada hubiera ocurrido. Dos repositorios distintos, un solo "recuerdo".*</sub>
 
 Esto no tiene nada que ver con las (mal llamadas) alucinaciones de los LLMs. No es el modelo inventando cosas. Es un problema derivado de decisiones arquitectónicas concretas de Anthropic para modelar la persistencia en Claude Code. Muy GNU/Linux en su planteamiento: robusta en general, frágil en las zonas grises.
 
@@ -118,3 +118,5 @@ Quedan dos aspectos abiertos como trabajo futuro:
 - **Validación de `$PROYECTOS_DIR`**: que el setup falle con un mensaje claro si el directorio de proyectos no existe, en lugar de completarse en silencio sin hacer nada útil
 
 Ambos están documentados como issues abiertos en el repositorio.
+
+El sistema de sincronización resuelve la contaminación. Pero hay un segundo problema que persiste aunque git y los symlinks funcionen perfectamente: la memoria correcta que dejó de ser verdad. Ese es el siguiente artículo: [Memoria caduca: el problema que git no resuelve](memoriaCaduca.md).
