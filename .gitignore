@@ -1,3 +1,4 @@
 *.jsonl
 projects/**/*.txt
 projects/**/*.json
+.claude/
