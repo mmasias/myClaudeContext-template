@@ -1,8 +1,10 @@
 # Los tres problemas de la memoria de Claude Code
 
-Claude Code tiene memoria persistente: guarda ficheros en disco que sobreviven entre sesiones y construyen el contexto de cada proyecto. Eso es una ventaja. También es una fuente de fallos que no siempre son obvios.
+Este repositorio nació con un objetivo concreto: resolver el problema de sincronizar el contexto de Claude Code entre máquinas. Git, symlinks, un script de setup. Algo técnico y delimitado.
 
-Los fallos de memoria de Claude Code caen en tres categorías distintas. Cada una tiene naturaleza diferente, diagnóstico diferente y solución diferente. Entender la distinción evita buscar soluciones técnicas donde hacen falta soluciones de proceso, y soluciones de proceso donde lo que hace falta es presencia humana.
+Al documentarlo, emergió algo que no estaba en el plan original. El intento de resolver la sincronización obligó a entender cómo funciona la memoria de Claude Code. Y entender cómo funciona llevó a identificar no uno sino tres modos distintos en que esa memoria puede fallar. Tres problemas con naturaleza diferente, diagnóstico diferente y solución diferente.
+
+El tercero, en particular, responde una pregunta que el debate sobre herramientas de IA suele dejar en abstracto: dónde entra el humano. La respuesta que emerge no es "como supervisor" ni "como safety net". Es más estructural que eso. Pero llegar a ella requiere recorrer los tres problemas en orden.
 
 ## La taxonomía
 
