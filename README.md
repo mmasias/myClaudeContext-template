@@ -1,10 +1,10 @@
 # myClaudeContext — template
 
-<div align=right><sub><i>
+<div align=right>
+  
+<sub><i>Este repositorio es el sustrato de identidad de Claude Code:<br>la máquina es intercambiable, el contexto no.<br>Como en SOMA, pero sin el dilema filosófico.<br></i></sub>
 
-Este repositorio es el sustrato de identidad de Claude Code:<br>la máquina es intercambiable, el contexto no.<br>Como en SOMA, pero sin el dilema filosófico.
-
-</i></sub></div>
+</div>
 
 Template para sincronizar el contexto de Claude Code entre múltiples máquinas mediante symlinks y git. Clona, adapta a tu caso, y Claude Code arranca con el mismo contexto en cualquier máquina.
 
