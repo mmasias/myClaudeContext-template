@@ -43,6 +43,23 @@ Los ficheros reales viven en este repo. En cada máquina, symlinks apuntan a ell
 
 ---
 
+## Requisito previo: consistencia entre máquinas
+
+Este sistema depende de mantener la misma estructura de directorios y el mismo nombre de usuario en todas las máquinas.
+
+> *¿Quieres orden? Sé ordenado.*
+
+Si en una máquina tus proyectos viven en `~/misRepos/proyectos/` y en otra en `~/Documentos/proyectos/`, los symlinks apuntarán a sitios que no existen y el sistema fallará en silencio. Sin avisos, sin errores obvios.
+
+Antes de empezar, decide tu estructura y mantenla. Luego edita las dos variables de configuración al inicio de `setup-claude-symlinks.sh`:
+
+```bash
+REPO=~/misRepos/myClaudeContext      # dónde vive este repo
+PROYECTOS_DIR=~/misRepos/proyectos   # dónde viven tus proyectos
+```
+
+---
+
 ## Cómo usarlo
 
 ### 1. Clonar y adaptar
