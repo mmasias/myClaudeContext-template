@@ -1,6 +1,11 @@
 #!/bin/bash
 
+# ============================================================
+# CONFIGURACIÓN — adaptar a cada usuario
+# ============================================================
 REPO=~/misRepos/myClaudeContext
+PROYECTOS_DIR=~/misRepos/proyectos
+# ============================================================
 
 # Asegurar que ~/.claude existe antes de crear symlinks
 # (puede existir previamente creado por plugins de VSCode u otras herramientas)
@@ -13,10 +18,10 @@ ln -sf $REPO/global/CLAUDE.md ~/.claude/CLAUDE.md
 ln -sf $REPO/projects ~/.claude/projects
 
 # Contexto común de proyectos
-ln -sf $REPO/proyectos/CLAUDE.md ~/misRepos/proyectos/CLAUDE.md
+ln -sf $REPO/proyectos/CLAUDE.md $PROYECTOS_DIR/CLAUDE.md
 
-# Por cada directorio en ~/misRepos/proyectos/
-for dir in ~/misRepos/proyectos/*/; do
+# Por cada directorio en PROYECTOS_DIR
+for dir in $PROYECTOS_DIR/*/; do
     proyecto=$(basename "$dir")
 
     # Asegurar que .claude/ está en .gitignore
