@@ -8,6 +8,8 @@
 
 Template para sincronizar el contexto de Claude Code y Gemini CLI entre múltiples máquinas mediante symlinks y git. Una vez configurado, ambos agentes arrancan con el mismo contexto en cualquier máquina.
 
+> **De dónde viene esto.** El sistema nació de analizar tres problemas estructurales de la memoria de los agentes de IA: memoria contaminada, memoria caduca y memoria incompleta. Si quieres entender la motivación antes de usar la herramienta, los artículos están en [`docs/`](docs/losTresProblemas.md).
+
 ---
 
 ## El problema que resuelve
