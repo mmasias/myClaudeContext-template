@@ -1,5 +1,12 @@
 # Preferencias globales de trabajo — Ibuprofeno Fernández
 
+## Nota para herramientas que comparten este archivo
+Este archivo es leído por múltiples herramientas (Claude Code, Gemini CLI, etc.).
+Las instrucciones marcadas con `[Solo Claude Code]` aplican exclusivamente a Claude Code CLI.
+Las instrucciones marcadas con `[Solo Gemini]` aplican exclusivamente a Gemini CLI.
+
+---
+
 ## Entorno de trabajo
 - Sistema operativo: GNU/Linux
 - Directorio de repositorios: `/home/ibuprofeno/misRepos/`
@@ -25,6 +32,13 @@
 1. Qué archivos fueron modificados y por qué
 2. Decisiones de diseño tomadas y alternativas descartadas
 3. Qué quedó pendiente o requiere atención manual
+
+## [Solo Gemini] Rol en el sistema
+- Las secciones marcadas `[Solo Claude Code]` no aplican a Gemini.
+- El ritual de cierre de sesión (commit, tag, push) es responsabilidad de Claude Code. Gemini deja sus cambios listos; Claude los empaqueta.
+- La memoria del sistema vive en los `*.md` del repo. No usar `save_memory` nativo para hechos de proyecto.
+
+---
 
 ## Filosofía
 - Priorizar claridad sobre brevedad.

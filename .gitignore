@@ -2,3 +2,4 @@
 projects/**/*.txt
 projects/**/*.json
 .claude/
+GEMINI.md
