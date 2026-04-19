@@ -174,3 +174,7 @@ Dentro de `projects/`, solo se trackean en git los ficheros `*.md` (memoria inte
 **Git como red de seguridad.** Aunque se pierda contexto en una sesión por un conflicto mal resuelto, `git log` y los tags `memory-stable-YYYY-MM-DD` permiten recuperar cualquier estado anterior de los `*.md`.
 
 **Gestión de conflictos.** Si se trabaja en dos máquinas sin sincronizar y ambas modifican el mismo fichero, git generará un conflicto al hacer push. La resolución debe hacerse manualmente: resolver el conflicto, hacer push desde una sola máquina, y continuar desde la otra tras un pull.
+
+---
+
+<sub>**macOS:** los scripts están probados en Linux. En macOS hay diferencias en el comportamiento de `~/.claude/projects` (debe ser directorio real, no symlink) que requieren adaptaciones. Si lo necesitas, abre un issue.</sub>
