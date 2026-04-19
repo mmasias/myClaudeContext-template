@@ -2,7 +2,9 @@
 
 <div align=right>
 
-<sub><i>Este repositorio es el sustrato de identidad de Claude Code:<br>la máquina es intercambiable, el contexto no.<br>Como en SOMA, pero sin el dilema filosófico.<br></i></sub>
+||
+|-
+|<sub><i>Este repositorio es el sustrato de identidad de Claude Code:<br>la máquina es intercambiable, el contexto no.<br>Como en [SOMA](https://es.wikipedia.org/wiki/Soma_(videojuego)), pero sin el dilema filosófico.<br></i></sub>
 
 </div>
 
