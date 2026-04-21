@@ -3,7 +3,7 @@
 REPO=~/misRepos/myClaudeContext
 PROYECTOS_DIR=~/misRepos/proyectos
 
-# Asegurar que ~/.claude existe antes de crear symlinks
+# Ensure ~/.claude exists before creating symlinks
 mkdir -p ~/.claude
 
 # Global — Claude Code
@@ -15,58 +15,58 @@ if [ -L ~/.gemini/GEMINI.md ]; then
     rm ~/.gemini/GEMINI.md
 elif [ -f ~/.gemini/GEMINI.md ]; then
     mv ~/.gemini/GEMINI.md ~/.gemini/GEMINI.md.bak
-    echo "Backup de ~/.gemini/GEMINI.md existente → GEMINI.md.bak"
+    echo "Backed up existing ~/.gemini/GEMINI.md -> GEMINI.md.bak"
 elif [ -d ~/.gemini/GEMINI.md ]; then
-    echo "[ERROR] ~/.gemini/GEMINI.md es un directorio — resolución manual necesaria"
+    echo "[ERROR] ~/.gemini/GEMINI.md is a directory — manual resolution required"
     exit 1
 fi
 ln -sf $REPO/global/CLAUDE.md ~/.gemini/GEMINI.md
 
-# Proyectos y memoria interna de Claude Code
+# Projects and Claude Code internal memory
 if [ -L ~/.claude/projects ]; then
     rm ~/.claude/projects
 elif [ -d ~/.claude/projects ]; then
     rm -rf ~/.claude/projects
-    echo "Eliminado ~/.claude/projects (directorio real) — reemplazado por symlink"
+    echo "Removed ~/.claude/projects (real directory) — replaced with symlink"
 fi
 ln -sf $REPO/projects ~/.claude/projects
 
-# CLAUDE.md compartido para todos los proyectos
+# Shared CLAUDE.md for all projects
 if [ -d "$PROYECTOS_DIR" ]; then
     ln -sf $REPO/proyectos/CLAUDE.md "$PROYECTOS_DIR/CLAUDE.md"
 fi
 
-# Por cada directorio en proyectos/
+# For each directory in proyectos/
 for dir in "$PROYECTOS_DIR"/*/; do
     [ -d "$dir" ] || continue
     proyecto=$(basename "$dir")
 
-    # Asegurar que .claude/ está en .gitignore
+    # Ensure .claude/ is in .gitignore
     if [ -f "$dir/.gitignore" ]; then
         if ! grep -q "\.claude" "$dir/.gitignore"; then
             echo ".claude/" >> "$dir/.gitignore"
-            echo "Añadido .claude/ a $proyecto/.gitignore"
+            echo "Added .claude/ to $proyecto/.gitignore"
         fi
     else
         echo ".claude/" > "$dir/.gitignore"
-        echo "Creado .gitignore en $proyecto"
+        echo "Created .gitignore in $proyecto"
     fi
 
-    # Crear carpeta y CLAUDE.md vacío en el repo si no existe
+    # Create folder and empty CLAUDE.md in repo if it doesn't exist
     if [ ! -f "$REPO/proyectos/$proyecto/CLAUDE.md" ]; then
         mkdir -p "$REPO/proyectos/$proyecto"
         touch "$REPO/proyectos/$proyecto/CLAUDE.md"
-        echo "Creado CLAUDE.md vacío para $proyecto en myClaudeContext"
+        echo "Created empty CLAUDE.md for $proyecto in myClaudeContext"
     fi
 
-    # Asegurar que GEMINI.md está en .gitignore
+    # Ensure GEMINI.md is in .gitignore
     if ! grep -qx "GEMINI.md" "$dir/.gitignore" 2>/dev/null; then
         [ -s "$dir/.gitignore" ] && [ "$(tail -c1 "$dir/.gitignore" | wc -l)" -eq 0 ] && echo "" >> "$dir/.gitignore"
         echo "GEMINI.md" >> "$dir/.gitignore"
-        echo "Añadido GEMINI.md a $proyecto/.gitignore"
+        echo "Added GEMINI.md to $proyecto/.gitignore"
     fi
 
-    # Crear symlinks — Claude y Gemini apuntan al mismo archivo
+    # Create symlinks — Claude and Gemini point to the same file
     mkdir -p "$dir/.claude"
     ln -sf $REPO/proyectos/$proyecto/CLAUDE.md \
            "$dir/.claude/CLAUDE.md"
@@ -74,13 +74,13 @@ for dir in "$PROYECTOS_DIR"/*/; do
            "$dir/GEMINI.md"
 done
 
-# Permisos de ejecución a los scripts de sync
+# Execution permissions for sync scripts
 chmod +x $REPO/linux/pull-claude-context.sh
 chmod +x $REPO/linux/push-claude-context.sh
 chmod +x $REPO/check-claude-integrity.sh
 chmod +x $REPO/bootstrap.sh
 
-# Symlinks en ~/.local/bin para acceso global
+# Symlinks in ~/.local/bin for global access
 mkdir -p ~/.local/bin
 ln -sf $REPO/linux/pull-claude-context.sh  ~/.local/bin/memory-pull
 ln -sf $REPO/linux/push-claude-context.sh  ~/.local/bin/memory-push
@@ -88,4 +88,4 @@ ln -sf $REPO/check-claude-integrity.sh     ~/.local/bin/memory-check
 ln -sf $REPO/bootstrap.sh                  ~/.local/bin/memory-bootstrap
 ln -sf $REPO/memory-audit.sh               ~/.local/bin/memory-audit
 
-echo "Symlinks creados y scripts con permisos de ejecución."
+echo "Symlinks created and scripts made executable."

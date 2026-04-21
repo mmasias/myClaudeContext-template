@@ -1,8 +1,7 @@
 #!/bin/bash
 # bootstrap.sh
-# Configura una máquina nueva: clona los repos del manifiesto, crea symlinks
-# y sincroniza la memoria. Ejecutar una sola vez, antes del primer arranque
-# de Claude Code.
+# Full setup for a new machine: clones repos from the manifest, creates symlinks,
+# and syncs memory. Run once, before the first Claude Code launch.
 
 REPO=~/misRepos/myClaudeContext
 MANIFEST="$REPO/manifiesto.txt"
@@ -19,9 +18,9 @@ echo "======================================"
 echo "  Claude Context — Bootstrap"
 echo "======================================"
 
-# ── 1. Clonar repos del manifiesto ────────────────────
+# ── 1. Clone repos from manifest ──────────────────────
 echo ""
-echo "=== Clonando repos del manifiesto ==="
+echo "=== Cloning repos from manifest ==="
 
 while IFS= read -r line; do
     [[ "$line" =~ ^#.*$ || -z "$line" ]] && continue
@@ -30,32 +29,32 @@ while IFS= read -r line; do
     local_path=~/misRepos/"$ruta"
 
     if [ -d "$local_path" ]; then
-        echo "[OK]   Ya existe: $ruta"
+        echo "[OK]   Already exists: $ruta"
     else
-        echo "Clonando $ruta ..."
+        echo "Cloning $ruta ..."
         git clone "$url" "$local_path"
         if [ $? -ne 0 ]; then
-            echo "[WARN] Falló el clone de $ruta — revisar acceso y clonar manualmente."
+            echo "[WARN] Clone failed for $ruta — check access and clone manually."
         else
-            echo "[OK]   Clonado: $ruta"
+            echo "[OK]   Cloned: $ruta"
         fi
     fi
 done < "$MANIFEST"
 
-# ── 2. Setup de symlinks ───────────────────────────────
+# ── 2. Set up symlinks ────────────────────────────────
 echo ""
-echo "=== Configurando symlinks ==="
+echo "=== Setting up symlinks ==="
 chmod +x "$SETUP"
 "$SETUP"
 
-# ── 3. Sincronizar memoria ─────────────────────────────
+# ── 3. Sync memory ────────────────────────────────────
 echo ""
-echo "=== Sincronizando memoria ==="
+echo "=== Syncing memory ==="
 chmod +x "$PULL"
 "$PULL"
 
 echo ""
 echo "======================================"
-echo "  Bootstrap completado."
-echo "  Lanzar Claude Code."
+echo "  Bootstrap complete."
+echo "  Launch Claude Code."
 echo "======================================"

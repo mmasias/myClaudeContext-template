@@ -6,7 +6,7 @@ LOCAL_PROJECTS=~/.claude/projects
 LINUX_USER=$(whoami)
 MACOS_USER=$(whoami)
 
-# ── Copiar dirs macOS (local) → dirs Linux (repo) ─────
+# ── Copy macOS dirs (local) -> Linux dirs (repo) ──────
 for macos_dir in "$LOCAL_PROJECTS"/-Users-"$MACOS_USER"-*/; do
     [ -d "$macos_dir" ] || continue
 
@@ -15,23 +15,23 @@ for macos_dir in "$LOCAL_PROJECTS"/-Users-"$MACOS_USER"-*/; do
     linux_dir="$REPO_PROJECTS/$linux_dirname"
 
     cp -r "$macos_dir" "$linux_dir"
-    echo "Copiado: $dirname → $linux_dirname"
+    echo "Copied: $dirname -> $linux_dirname"
 done
 
-# ── Commit y push ──────────────────────────────────────
+# ── Commit and push ────────────────────────────────────
 cd "$REPO"
 git add -A
-git commit -m "sync: estado sesión $(date '+%Y-%m-%d %H:%M')"
+git commit -m "sync: session state $(date '+%Y-%m-%d %H:%M')"
 git push
 push_status=$?
 
 if [ $push_status -ne 0 ]; then
-    echo "Push fallido — el repo puede estar en estado inconsistente. Revisar manualmente."
+    echo "Push failed — repo may be in an inconsistent state. Check manually."
     exit 1
 fi
 
-# Tag de estado estable (fallback sin Claude activo)
+# Stable state tag (fallback when Claude is not active)
 TAG="memory-stable-$(date +%Y-%m-%d)"
 git tag -f "$TAG"
 git push origin "refs/tags/$TAG" --force
-echo "Tag creado: $TAG"
+echo "Tag created: $TAG"

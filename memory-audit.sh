@@ -1,6 +1,6 @@
 #!/bin/bash
-# Evalúa repos con memoria fuera de proyectos/ y propone acción.
-# Ejecutar al inicio de cada cuatrimestre o cuando el sistema acumula repos inactivos.
+# Evaluates repos with memory in projects/ and suggests an action.
+# Run periodically to keep the system clean.
 
 REPO=~/misRepos/myClaudeContext
 PROJECTS="$REPO/projects"
@@ -16,7 +16,7 @@ for project_dir in "$PROJECTS"/*/; do
     [ -d "$project_dir" ] || continue
     dirname=$(basename "$project_dir")
 
-    # Excluir memoria global (raíz de misRepos)
+    # Exclude global memory (misRepos root)
     [ "$dirname" = "-home-$(whoami)-misRepos" ] && continue
     [ "$dirname" = "-Users-$(whoami)-misRepos" ] && continue
 
@@ -29,7 +29,7 @@ for project_dir in "$PROJECTS"/*/; do
 
     memory_files=$(find "$memory_dir" -name "*.md" ! -name "MEMORY.md" | wc -l)
 
-    # Compatibilidad Linux/macOS para obtener timestamp de modificación
+    # Linux/macOS compatible timestamp
     if [[ "$(uname)" == "Darwin" ]]; then
         last_mod=$(find "$memory_dir" -name "*.md" -exec stat -f "%m" {} \; 2>/dev/null | sort -n | tail -1)
     else
@@ -43,18 +43,18 @@ for project_dir in "$PROJECTS"/*/; do
     fi
 
     if [ "$memory_files" -eq 0 ]; then
-        verdict="ARCHIVAR  — sin memoria real; eliminar directorio de projects/"
+        verdict="ARCHIVE   — no real memory; delete directory from projects/"
     elif [ "$days_ago" -gt 90 ]; then
-        verdict="REVISAR   — tiene memoria pero lleva >90 días inactivo"
+        verdict="REVIEW    — has memory but inactive for >90 days"
     else
-        verdict="ACTIVO    — uso reciente"
+        verdict="ACTIVE    — recent usage"
     fi
 
     echo ""
     echo "--- $repo_name ---"
-    echo "  Archivos de memoria : $memory_files"
-    echo "  Última actividad    : hace $days_ago días"
-    echo "  Veredicto           : $verdict"
+    echo "  Memory files    : $memory_files"
+    echo "  Last activity   : $days_ago days ago"
+    echo "  Verdict         : $verdict"
 
     if [ "$memory_files" -gt 0 ]; then
         find "$memory_dir" -name "*.md" ! -name "MEMORY.md" | while read -r f; do
@@ -65,7 +65,7 @@ done
 
 if [ "$found" -eq 0 ]; then
     echo ""
-    echo "No se encontraron repos con memoria en projects/."
+    echo "No repos with memory found in projects/."
 fi
 
 echo ""

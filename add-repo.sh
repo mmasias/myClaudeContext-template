@@ -1,15 +1,15 @@
 #!/bin/bash
 # add-repo.sh <github-url>
-# Clona un repo en ~/misRepos/proyectos/<nombre>, lo añade al manifiesto
-# y actualiza los symlinks. Ejecutar memory-push después.
+# Clones a repo into ~/misRepos/proyectos/<name>, adds it to the manifest,
+# and updates symlinks. Run memory-push afterwards.
 
 REPO=~/misRepos/myClaudeContext
 MANIFEST="$REPO/manifiesto.txt"
 PROYECTOS_DIR=~/misRepos/proyectos
 
 if [ -z "$1" ]; then
-    echo "Uso: $0 <github-url>"
-    echo "Ejemplo: $0 https://github.com/usuario/nuevo-proyecto.git"
+    echo "Usage: $0 <github-url>"
+    echo "Example: $0 https://github.com/user/new-project.git"
     exit 1
 fi
 
@@ -18,34 +18,34 @@ NOMBRE=$(basename "$URL" .git)
 LOCAL_PATH="$PROYECTOS_DIR/$NOMBRE"
 MANIFEST_ENTRY="proyectos/$NOMBRE"
 
-# ── Validaciones ───────────────────────────────────────
+# ── Validations ────────────────────────────────────────
 
 if grep -q "$MANIFEST_ENTRY" "$MANIFEST" 2>/dev/null; then
-    echo "[WARN] $MANIFEST_ENTRY ya está en el manifiesto — abortando."
+    echo "[WARN] $MANIFEST_ENTRY is already in the manifest — aborting."
     exit 1
 fi
 
 if [ -d "$LOCAL_PATH" ]; then
-    echo "[WARN] $LOCAL_PATH ya existe en disco — abortando."
+    echo "[WARN] $LOCAL_PATH already exists on disk — aborting."
     exit 1
 fi
 
-# ── Clonar ─────────────────────────────────────────────
+# ── Clone ──────────────────────────────────────────────
 
 mkdir -p "$PROYECTOS_DIR"
-echo "Clonando $URL → $LOCAL_PATH ..."
+echo "Cloning $URL -> $LOCAL_PATH ..."
 git clone "$URL" "$LOCAL_PATH"
 if [ $? -ne 0 ]; then
-    echo "[ERROR] El clone falló — abortando."
+    echo "[ERROR] Clone failed — aborting."
     exit 1
 fi
 
-# ── Añadir al manifiesto ───────────────────────────────
+# ── Add to manifest ────────────────────────────────────
 
 printf "%-55s %s\n" "$URL" "$MANIFEST_ENTRY" >> "$MANIFEST"
-echo "[OK] Añadido al manifiesto: $MANIFEST_ENTRY"
+echo "[OK] Added to manifest: $MANIFEST_ENTRY"
 
-# ── Actualizar symlinks ────────────────────────────────
+# ── Update symlinks ────────────────────────────────────
 
 if [[ "$(uname)" == "Darwin" ]]; then
     SETUP="$REPO/macos/setup-claude-symlinks.sh"
@@ -56,7 +56,7 @@ fi
 chmod +x "$SETUP"
 "$SETUP"
 
-# ── Instrucción final ──────────────────────────────────
+# ── Final instruction ──────────────────────────────────
 
 echo ""
-echo "Repo '$NOMBRE' añadido. Ejecuta memory-push para sincronizar el manifiesto."
+echo "Repo '$NOMBRE' added. Run memory-push to sync the manifest."
