@@ -1,0 +1,6 @@
+# Manifiesto de repos del sistema
+# Formato: <url-github>   <ruta-relativa-a-~/misRepos/>
+# Ejemplo:
+# https://github.com/usuario/mi-proyecto.git   proyectos/mi-proyecto
+
+# Añadir repos aquí. bootstrap.sh los clonará automáticamente en máquinas nuevas.
