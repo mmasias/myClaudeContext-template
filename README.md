@@ -4,38 +4,38 @@
 
 ||
 |-
-|<sub><i>Este repositorio es el sustrato de identidad de Claude Code:<br>la máquina es intercambiable, el contexto no.<br>Como en [SOMA](https://es.wikipedia.org/wiki/Soma_(videojuego)), pero sin el dilema filosófico.<br></i></sub>
+|<sub><i>This repository is Claude Code's identity substrate:<br>the machine is replaceable, the context is not.<br>Like [SOMA](https://es.wikipedia.org/wiki/Soma_(videojuego)), but without the philosophical dilemma.<br></i></sub>
 
 </div>
 
-Template para sincronizar el contexto de Claude Code y Gemini CLI entre múltiples máquinas mediante symlinks y git. Una vez configurado, ambos agentes arrancan con el mismo contexto en cualquier máquina.
+Template for syncing Claude Code and Gemini CLI context across multiple machines using symlinks and git. Once set up, both agents start with the same context on any machine.
 
-> **De dónde viene esto.** El sistema nació de analizar tres problemas estructurales de la memoria de los agentes de IA: memoria contaminada, memoria caduca y memoria incompleta. Si quieres entender la motivación antes de usar la herramienta, los artículos están en [`docs/`](docs/losTresProblemas.md).
-
----
-
-## El problema que resuelve
-
-Claude Code y Gemini CLI guardan su contexto en archivos locales:
-
-- `~/.claude/CLAUDE.md` / `~/.gemini/GEMINI.md` — instrucciones globales de comportamiento
-- `~/.claude/projects/` — memoria de cada proyecto (decisiones, estado de sesión, notas)
-
-Por defecto, ese contexto vive solo en la máquina local. Al trabajar en varias máquinas, cada una acumula su propia versión que evoluciona de forma independiente. Este repositorio resuelve esa divergencia.
+> **Background.** This system was born from analyzing three structural problems with AI agent memory: contaminated memory, stale memory, and incomplete memory. If you want to understand the motivation before using the tool, the articles are in [`docs/`](docs/losTresProblemas.md).
 
 ---
 
-## Estructura
+## The problem it solves
+
+Claude Code and Gemini CLI store their context in local files:
+
+- `~/.claude/CLAUDE.md` / `~/.gemini/GEMINI.md` — global behavior instructions
+- `~/.claude/projects/` — per-project memory (decisions, session state, notes)
+
+By default, that context lives only on the local machine. When working across multiple machines, each one accumulates its own version that evolves independently. This repository fixes that divergence.
+
+---
+
+## Structure
 
 ```
 myClaudeContext/
 ├── global/
-│   └── CLAUDE.md              <- ~/.claude/CLAUDE.md y ~/.gemini/GEMINI.md
+│   └── CLAUDE.md              <- ~/.claude/CLAUDE.md and ~/.gemini/GEMINI.md
 ├── proyectos/
 │   ├── CLAUDE.md              <- ~/misRepos/proyectos/CLAUDE.md
-│   └── <proyecto>/
-│       └── CLAUDE.md          <- <proyecto>/.claude/CLAUDE.md y <proyecto>/GEMINI.md
-├── projects/                  <- ~/.claude/projects/ (memoria de proyectos)
+│   └── <project>/
+│       └── CLAUDE.md          <- <project>/.claude/CLAUDE.md and <project>/GEMINI.md
+├── projects/                  <- ~/.claude/projects/ (project memory)
 ├── linux/
 │   ├── setup-claude-symlinks.sh
 │   ├── pull-claude-context.sh
@@ -44,190 +44,190 @@ myClaudeContext/
 │   ├── setup-claude-symlinks.sh
 │   ├── pull-claude-context.sh
 │   └── push-claude-context.sh
-├── bootstrap.sh               <- setup completo de máquina nueva (cross-platform)
-├── add-repo.sh                <- añadir proyecto nuevo al sistema (cross-platform)
-├── check-claude-integrity.sh  <- validación de integridad (cross-platform)
-├── memory-audit.sh            <- auditoría de repos inactivos (cross-platform)
-├── manifiesto.txt             <- repos que deben existir en el sistema
-├── RITUALES.md                <- referencia completa de rituales
-└── docs/                      <- motivación y análisis del sistema
+├── bootstrap.sh               <- full setup for a new machine (cross-platform)
+├── add-repo.sh                <- add a new project to the system (cross-platform)
+├── check-claude-integrity.sh  <- integrity validation (cross-platform)
+├── memory-audit.sh            <- audit inactive repos (cross-platform)
+├── manifiesto.txt             <- repos that must exist in the system
+├── RITUALS.md                 <- complete ritual reference
+└── docs/                      <- motivation and system analysis
 ```
 
-Los ficheros reales viven en este repositorio. En cada máquina, symlinks apuntan a ellos desde las ubicaciones que cada herramienta espera.
+The actual files live in this repository. On each machine, symlinks point to them from the locations each tool expects.
 
-Ambos agentes comparten el mismo archivo físico por nivel. Las secciones `[Solo Claude Code]` y `[Solo Gemini]` en `global/CLAUDE.md` permiten instrucciones específicas por agente sin duplicar archivos.
+Both agents share the same physical file per level. Sections marked `[Claude Code only]` and `[Gemini only]` in `global/CLAUDE.md` allow agent-specific instructions without duplicating files.
 
 ---
 
-## Requisito previo: consistencia entre máquinas
+## Prerequisite: consistency across machines
 
-Este sistema depende de mantener la misma estructura de directorios y el mismo nombre de usuario en todas las máquinas.
+This system depends on maintaining the same directory structure and username on all machines.
 
-> *¿Quieres orden? Sé ordenado.*
+> *Want order? Be orderly.*
 
-Si en una máquina los proyectos viven en `~/misRepos/proyectos/` y en otra en `~/Documentos/proyectos/`, los symlinks apuntarán a rutas inexistentes y el sistema fallará en silencio. Sin avisos, sin errores obvios.
+If on one machine projects live in `~/misRepos/proyectos/` and on another in `~/Documents/projects/`, symlinks will point to non-existent paths and the system will fail silently — no warnings, no obvious errors.
 
-La estructura debe decidirse antes de comenzar y mantenerse de forma consistente. Se configura editando las dos variables al inicio de cada script:
+The structure must be decided before starting and kept consistent. Configure it by editing the two variables at the top of each script:
 
 ```bash
-REPO=~/misRepos/myClaudeContext      # ubicación de este repositorio
-PROYECTOS_DIR=~/misRepos/proyectos   # ubicación de los proyectos
+REPO=~/misRepos/myClaudeContext      # location of this repository
+PROYECTOS_DIR=~/misRepos/proyectos   # location of your projects
 ```
 
 ---
 
-## Cómo usarlo
+## How to use it
 
-### 1. Clonar y adaptar
+### 1. Clone and adapt
 
 ```bash
 git clone https://github.com/mmasias/myClaudeContext-template
 cd myClaudeContext-template
 
-# Apuntar a un repositorio privado propio
-git remote set-url origin https://github.com/<usuario>/myClaudeContext
+# Point to your own private repository
+git remote set-url origin https://github.com/<user>/myClaudeContext
 ```
 
-Los `CLAUDE.md` incluidos usan a **Ibuprofeno Fernández** como personaje de ejemplo. Sustituirlos por el contexto real antes de usar el sistema.
+The included `CLAUDE.md` files use **Ibuprofeno Fernández** as a placeholder character. Replace them with your actual context before using the system.
 
-### 2. Primera vez en una máquina nueva
+### 2. First time on a new machine
 
 ```bash
-git clone https://github.com/<usuario>/myClaudeContext ~/misRepos/myClaudeContext
+git clone https://github.com/<user>/myClaudeContext ~/misRepos/myClaudeContext
 chmod +x ~/misRepos/myClaudeContext/bootstrap.sh
 ~/misRepos/myClaudeContext/bootstrap.sh
 ```
 
-`bootstrap.sh` clona los repos del manifiesto, crea los symlinks y sincroniza la memoria.
+`bootstrap.sh` clones the repos from the manifest, creates symlinks, and syncs memory.
 
-> **Crítico:** Claude Code no debe arrancarse antes de que `bootstrap.sh` termine. Si arranca primero, crea `~/.claude/projects/` como directorio real y los symlinks quedan mal instalados. Solución: ejecutar `setup-claude-symlinks.sh` de nuevo.
+> **Critical:** Claude Code must not be launched before `bootstrap.sh` finishes. If it starts first, it creates `~/.claude/projects/` as a real directory and the symlinks end up broken. Fix: run `setup-claude-symlinks.sh` again.
 
-### 3. Flujo diario
+### 3. Daily workflow
 
 ```bash
-# Al comenzar
+# When starting work
 memory-pull
 
-# Al terminar (con Claude activo — Claude hace el cierre semántico)
-# Al terminar (sin Claude)
+# When finishing (with Claude active — Claude handles the semantic close)
+# When finishing (without Claude)
 memory-push
 ```
 
 ---
 
-## Comandos globales
+## Global commands
 
-Tras ejecutar `bootstrap.sh` o `setup-claude-symlinks.sh`, los siguientes comandos están disponibles desde cualquier directorio:
+After running `bootstrap.sh` or `setup-claude-symlinks.sh`, the following commands are available from any directory:
 
-| Comando | Equivale a |
+| Command | Equivalent to |
 |---|---|
-| `memory-pull` | `linux/pull-claude-context.sh` (o `macos/`) |
-| `memory-push` | `linux/push-claude-context.sh` (o `macos/`) |
+| `memory-pull` | `linux/pull-claude-context.sh` (or `macos/`) |
+| `memory-push` | `linux/push-claude-context.sh` (or `macos/`) |
 | `memory-check` | `check-claude-integrity.sh` |
 | `memory-bootstrap` | `bootstrap.sh` |
 | `memory-audit` | `memory-audit.sh` |
 
-Los scripts crean symlinks en `~/.local/bin/` apuntando a la versión correcta para cada plataforma.
+The scripts create symlinks in `~/.local/bin/` pointing to the correct platform version.
 
-> **macOS:** verificar que `~/.local/bin` está en `$PATH`. Homebrew no lo añade por defecto. Añadir al `.zshrc`: `export PATH="$HOME/.local/bin:$PATH"`
+> **macOS:** verify that `~/.local/bin` is in `$PATH`. Homebrew does not add it by default. Add to `.zshrc`: `export PATH="$HOME/.local/bin:$PATH"`
 
 ---
 
-## Validación de integridad
+## Integrity validation
 
 ```bash
 memory-check
 ```
 
-Verifica symlinks de Claude y Gemini, estado del remote, coherencia de la memoria indexada y correspondencia Linux/macOS. Output `[OK]` / `[WARN]` / `[ERROR]` por cada check. Exit code = número de errores.
+Verifies Claude and Gemini symlinks, remote state, indexed memory consistency, and Linux/macOS path correspondence. Output is `[OK]` / `[WARN]` / `[ERROR]` per check. Exit code = number of errors.
 
-**Cuándo ejecutarlo:** al llegar tras un problema, después de instalar en una máquina nueva, o cuando algo se comporta raro.
+**When to run it:** after a problem, after installing on a new machine, or when something behaves unexpectedly.
 
-**Corrección según lo que reporte:**
+**Fix based on what it reports:**
 
-| Error | Acción |
+| Error | Action |
 |---|---|
-| Symlink roto o mal apuntado | `./linux/setup-claude-symlinks.sh` (o `macos/`) |
-| `~/.claude/projects` es directorio real (Linux) | `./linux/setup-claude-symlinks.sh` |
-| `~/.claude/projects` es symlink (macOS) | `./macos/setup-claude-symlinks.sh` |
-| Repo faltante del manifiesto | El check da el comando `git clone` exacto |
-| Referencia rota en MEMORY.md | Edición manual del archivo |
-| Repo divergido del remote | Resolución manual de conflicto git |
+| Broken or mispointed symlink | `./linux/setup-claude-symlinks.sh` (or `macos/`) |
+| `~/.claude/projects` is a real directory (Linux) | `./linux/setup-claude-symlinks.sh` |
+| `~/.claude/projects` is a symlink (macOS) | `./macos/setup-claude-symlinks.sh` |
+| Repo missing from manifest | The check outputs the exact `git clone` command |
+| Broken reference in MEMORY.md | Manual file edit |
+| Repo diverged from remote | Manual git conflict resolution |
 
 ---
 
-## Añadir un proyecto nuevo
+## Adding a new project
 
 ```bash
-./add-repo.sh https://github.com/usuario/nuevo-proyecto.git
+./add-repo.sh https://github.com/user/new-project.git
 ```
 
-Clona el repo en `~/misRepos/proyectos/<nombre>`, lo añade al manifiesto y regenera los symlinks. Después ejecutar `memory-push` para sincronizar.
+Clones the repo into `~/misRepos/proyectos/<name>`, adds it to the manifest, and regenerates symlinks. Then run `memory-push` to sync.
 
 ---
 
-## Auditoría de repos inactivos
+## Auditing inactive repos
 
 ```bash
 memory-audit
 ```
 
-Evalúa los repos con memoria acumulada y emite un veredicto:
+Evaluates repos with accumulated memory and issues a verdict for each:
 
-| Veredicto | Significado |
+| Verdict | Meaning |
 |---|---|
-| `ARCHIVAR` | Sin memoria real; eliminar el directorio de `projects/` |
-| `REVISAR` | Tiene memoria pero lleva >90 días inactivo |
-| `ACTIVO` | Uso reciente |
+| `ARCHIVE` | No real memory; delete the directory from `projects/` |
+| `REVIEW` | Has memory but inactive for >90 days |
+| `ACTIVE` | Recent usage |
 
 ---
 
-## Cómo funciona la cascada de contexto
+## How the context cascade works
 
-Cada agente carga sus instrucciones en orden, del más general al más específico:
+Each agent loads its instructions in order, from most general to most specific:
 
 **Claude Code:**
 ```
-~/.claude/CLAUDE.md                              -> comportamiento global
-~/misRepos/proyectos/CLAUDE.md                   -> contexto común a todos los proyectos
-~/misRepos/proyectos/<proyecto>/.claude/CLAUDE.md -> contexto por proyecto
+~/.claude/CLAUDE.md                              -> global behavior
+~/misRepos/proyectos/CLAUDE.md                   -> shared context for all projects
+~/misRepos/proyectos/<project>/.claude/CLAUDE.md -> per-project context
 ```
 
 **Gemini CLI:**
 ```
-~/.gemini/GEMINI.md                              -> comportamiento global (mismo archivo que Claude)
-~/misRepos/proyectos/<proyecto>/GEMINI.md        -> contexto por proyecto (mismo archivo que Claude)
+~/.gemini/GEMINI.md                              -> global behavior (same file as Claude)
+~/misRepos/proyectos/<project>/GEMINI.md         -> per-project context (same file as Claude)
 ```
 
-Los archivos de proyecto se excluyen vía `.gitignore` (`.claude/` y `GEMINI.md`) para que no sean públicos en GitHub.
+Project files are excluded via `.gitignore` (`.claude/` and `GEMINI.md`) so they are not published to GitHub.
 
 ---
 
-## Qué se sincroniza y qué no
+## What gets synced and what doesn't
 
-Dentro de `projects/`, solo se trackean en git los ficheros `*.md` (memoria intencional):
+Inside `projects/`, only `*.md` files (intentional memory) are tracked in git:
 
-| Tipo | Qué es | En git |
+| Type | What it is | In git |
 |---|---|---|
-| `*.md` | Memoria intencional de proyectos | ✓ |
-| `*.jsonl` | Logs de sesión, escritura continua | ✗ |
-| `*.json` | Índices de sesión y metadatos | ✗ |
-| `*.txt` | Resultados de herramientas | ✗ |
+| `*.md` | Intentional project memory | ✓ |
+| `*.jsonl` | Session logs, continuous writes | ✗ |
+| `*.json` | Session indexes and metadata | ✗ |
+| `*.txt` | Tool results | ✗ |
 
 ---
 
-## Notas de arquitectura
+## Architecture notes
 
-**`~/.claude/` puede existir antes de Claude Code.** Plugins de VSCode u otras herramientas pueden crear el directorio. Los scripts usan `mkdir -p` para manejar ambos casos sin conflicto.
+**`~/.claude/` may exist before Claude Code.** VSCode plugins or other tools can create the directory. Scripts use `mkdir -p` to handle both cases without conflict.
 
-**La identidad de un proyecto depende del path absoluto.** Claude Code genera el identificador de cada proyecto a partir de la ruta absoluta en disco. Si esa ruta difiere entre máquinas, la memoria no se comparte aunque el contenido del repositorio sea idéntico. Este es el motivo por el que la consistencia de paths es un requisito no negociable del sistema.
+**Project identity depends on the absolute path.** Claude Code generates each project's identifier from its absolute path on disk. If that path differs between machines, memory is not shared even if the repository content is identical. This is why path consistency is a non-negotiable requirement of the system.
 
-**Linux vs macOS: comportamiento diferente de `~/.claude/projects/`.** En Linux, `projects/` es un symlink directo al repo (Claude Code escribe directamente en git). En macOS, `projects/` debe ser un directorio real; los scripts `pull` y `push` se encargan de copiar los directorios y traducir los paths entre plataformas.
+**Linux vs macOS: different behavior for `~/.claude/projects/`.** On Linux, `projects/` is a direct symlink to the repo — Claude Code writes straight into git. On macOS, `projects/` must be a real directory; the `pull` and `push` scripts handle copying directories and translating paths between platforms.
 
-**Git como red de seguridad.** Aunque se pierda contexto en una sesión por un conflicto mal resuelto, `git log` y los tags `memory-stable-YYYY-MM-DD` permiten recuperar cualquier estado anterior de los `*.md`.
+**Git as a safety net.** Even if context is lost in a session due to a badly resolved conflict, `git log` and `memory-stable-YYYY-MM-DD` tags allow recovery of any previous state of the `*.md` files.
 
-**Gestión de conflictos.** Si se trabaja en dos máquinas sin sincronizar y ambas modifican el mismo fichero, git generará un conflicto al hacer push. La resolución debe hacerse manualmente: resolver el conflicto, hacer push desde una sola máquina, y continuar desde la otra tras un pull.
+**Conflict management.** If you work on two machines without syncing and both modify the same file, git will generate a conflict on push. Resolve it manually: fix the conflict, push from one machine, then pull from the other before continuing.
 
 ---
 
-> Referencia operativa completa: [RITUALES.md](RITUALES.md)
+> Complete operational reference: [RITUALS.md](RITUALES.md)

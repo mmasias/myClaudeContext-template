@@ -1,94 +1,94 @@
-# Rituales
+# Rituals
 
-Referencia operativa del sistema de contexto. Cada ritual cubre un momento del ciclo de vida.
+Operational reference for the context system. Each ritual covers a moment in the lifecycle.
 
 ---
 
-## 1. Máquina nueva
+## 1. New machine
 
-Una sola vez, antes del primer arranque de Claude Code:
+Once, before the first Claude Code launch:
 
 ```bash
-git clone https://github.com/<usuario>/myClaudeContext ~/misRepos/myClaudeContext
+git clone https://github.com/<user>/myClaudeContext ~/misRepos/myClaudeContext
 chmod +x ~/misRepos/myClaudeContext/bootstrap.sh
 ~/misRepos/myClaudeContext/bootstrap.sh
 ```
 
-`bootstrap.sh` se encarga de todo: clonar los repos del manifiesto, crear symlinks (Claude Code y Gemini CLI) y sincronizar memoria. Al terminar, lanzar Claude Code o Gemini CLI.
+`bootstrap.sh` handles everything: cloning repos from the manifest, creating symlinks (Claude Code and Gemini CLI), and syncing memory. When done, launch Claude Code or Gemini CLI.
 
-> **Crítico:** Claude Code no debe arrancarse antes de que bootstrap termine. Si arranca primero, crea `~/.claude/projects/` como directorio real y los symlinks quedan mal instalados. Solución: ejecutar `setup-claude-symlinks.sh` de nuevo.
+> **Critical:** Claude Code must not be launched before bootstrap finishes. If it starts first, it creates `~/.claude/projects/` as a real directory and the symlinks end up broken. Fix: run `setup-claude-symlinks.sh` again.
 
 ---
 
-## 2. Inicio de sesión
+## 2. Session start
 
 ```bash
 memory-pull
 ```
 
-Verifica la integridad mínima (symlinks, estado del remote) antes de sincronizar. Aborta con mensaje claro si algo está mal.
+Verifies minimum integrity (symlinks, remote state) before syncing. Aborts with a clear message if something is wrong.
 
-> **Si el script falla:** ejecutar `memory-bootstrap`. Bootstrap reconstruye el estado correcto desde cero y es seguro ejecutarlo en cualquier momento — no sobreescribe lo que ya está bien.
+> **If the script fails:** run `memory-bootstrap`. Bootstrap reconstructs the correct state from scratch and is safe to run at any time — it does not overwrite what is already correct.
 
 ---
 
-## 3. Cierre de sesión con Claude activo
+## 3. Session end with Claude active
 
-Claude genera el commit, el tag semántico y hace push:
+Claude generates the commit, the semantic tag, and pushes:
 
 ```bash
-# Claude ejecuta:
-git add <archivos modificados>
-git commit -m "tipo(scope): descripción semántica"
-git tag "stable-<verbo-objeto-kebab-case>"
+# Claude runs:
+git add <modified files>
+git commit -m "type(scope): semantic description"
+git tag "stable-<verb-subject-kebab-case>"
 git push
-git push origin "refs/tags/stable-<descripcion>" --force
+git push origin "refs/tags/stable-<description>" --force
 ```
 
-El tag refleja el tema dominante de la sesión. Ejemplos:
-- `stable-configurando-entorno`
-- `stable-actualizando-memoria-proyecto`
-- `stable-anadiendo-proyecto-nuevo`
+The tag reflects the dominant topic of the session. Examples:
+- `stable-setting-up-environment`
+- `stable-updating-project-memory`
+- `stable-adding-new-project`
 
-Formato: kebab-case, máximo 50 caracteres.
+Format: kebab-case, 50 characters maximum.
 
 ---
 
-## 4. Cierre de sesión sin Claude
+## 4. Session end without Claude
 
 ```bash
 memory-push
 ```
 
-Genera commit genérico (`sync: estado sesión YYYY-MM-DD HH:MM`) y tag de fecha (`memory-stable-YYYY-MM-DD`) como fallback. Menos semántico pero garantiza que la memoria queda sincronizada.
+Generates a generic commit (`sync: session state YYYY-MM-DD HH:MM`) and a date tag (`memory-stable-YYYY-MM-DD`) as a fallback. Less semantic but guarantees memory is synced.
 
 ---
 
-## 5. Validación de integridad
+## 5. Integrity validation
 
 ```bash
 memory-check
 ```
 
-Output `[OK]` / `[WARN]` / `[ERROR]` por cada check. Exit code = número de errores.
+Output is `[OK]` / `[WARN]` / `[ERROR]` per check. Exit code = number of errors.
 
-Cuándo ejecutarlo: al llegar tras un problema, después de una reinstalación, o cuando algo se comporta raro.
+When to run it: after a problem, after a reinstall, or when something behaves unexpectedly.
 
-**Corrección según lo que reporte:**
+**Fix based on what it reports:**
 
-| Error | Acción |
+| Error | Action |
 |---|---|
-| Symlink roto o apuntando a lugar incorrecto (Claude o Gemini) | `./linux/setup-claude-symlinks.sh` (o `macos/`) |
-| Repo faltante del manifiesto | El check da el comando `git clone` exacto |
-| Referencia rota en MEMORY.md | Edición manual del archivo |
-| Archivos `.jsonl/.json/.txt` trackeados en git | `git rm --cached <archivo>` |
-| Repo divergido del remote | Resolución manual de conflicto git |
+| Broken or mispointed symlink (Claude or Gemini) | `./linux/setup-claude-symlinks.sh` (or `macos/`) |
+| Repo missing from manifest | The check outputs the exact `git clone` command |
+| Broken reference in MEMORY.md | Manual file edit |
+| `.jsonl/.json/.txt` files tracked in git | `git rm --cached <file>` |
+| Repo diverged from remote | Manual git conflict resolution |
 
 ---
 
-## 6. Recuperación de memoria
+## 6. Memory recovery
 
-Ver el historial de estados estables:
+View the history of stable states:
 
 ```bash
 cd ~/misRepos/myClaudeContext
@@ -96,46 +96,46 @@ git tag -l "stable-*" | sort
 git tag -l "memory-stable-*" | sort
 ```
 
-Inspeccionar un estado pasado:
+Inspect a past state:
 
 ```bash
-git show <tag>:projects/<proyecto>/memory/MEMORY.md
+git show <tag>:projects/<project>/memory/MEMORY.md
 ```
 
-Restaurar la memoria de un proyecto a un punto anterior:
+Restore a project's memory to a previous point:
 
 ```bash
-git checkout <tag> -- projects/<proyecto>/memory/
-git commit -m "fix(memory): restaurar estado desde <tag>"
+git checkout <tag> -- projects/<project>/memory/
+git commit -m "fix(memory): restore state from <tag>"
 git push
 ```
 
 ---
 
-## 7. Auditoría periódica
+## 7. Periodic audit
 
-Cuando el sistema acumula repos inactivos:
+When the system accumulates inactive repos:
 
 ```bash
 memory-audit
 ```
 
-Evalúa los repos con memoria en `projects/` y emite un veredicto por cada uno:
+Evaluates repos with memory in `projects/` and issues a verdict for each:
 
-| Veredicto | Significado |
+| Verdict | Meaning |
 |---|---|
-| `ARCHIVAR` | Sin memoria real; eliminar el directorio de `projects/` |
-| `REVISAR` | Tiene memoria pero lleva >90 días inactivo |
-| `ACTIVO` | Uso reciente |
+| `ARCHIVE` | No real memory; delete the directory from `projects/` |
+| `REVIEW` | Has memory but inactive for >90 days |
+| `ACTIVE` | Recent usage |
 
 ---
 
-## 8. Añadir un repo nuevo al sistema
+## 8. Adding a new repo to the system
 
 ```bash
-~/misRepos/myClaudeContext/add-repo.sh https://github.com/usuario/nuevo-repo.git
+~/misRepos/myClaudeContext/add-repo.sh https://github.com/user/new-repo.git
 ```
 
-Clona el repo en `~/misRepos/proyectos/<nombre>`, lo añade al manifiesto y regenera symlinks. Después cerrar sesión normalmente (ritual 3 o 4) para sincronizar el manifiesto.
+Clones the repo into `~/misRepos/proyectos/<name>`, adds it to the manifest, and regenerates symlinks. Then close the session normally (ritual 3 or 4) to sync the manifest.
 
-En las demás máquinas: `memory-pull` + `./linux/setup-claude-symlinks.sh` (o `macos/`).
+On other machines: `memory-pull` + `./linux/setup-claude-symlinks.sh` (or `macos/`).
