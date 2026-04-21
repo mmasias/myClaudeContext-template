@@ -1,0 +1,79 @@
+@startuml rituals
+title Rituals — Claude Context System
+
+skinparam state {
+    BackgroundColor #f0f4f8
+    BorderColor #4a6fa5
+    FontName Arial
+    ArrowColor #4a6fa5
+    ArrowFontName Arial
+}
+
+skinparam note {
+    BackgroundColor #fffbe6
+    BorderColor #d4a017
+}
+
+[*] --> NewMachine
+
+state "New machine" as NewMachine {
+    [*] --> Bootstrapping
+    Bootstrapping : bootstrap.sh
+    Bootstrapping : · clones repos from manifest
+    Bootstrapping : · creates symlinks
+    Bootstrapping : · syncs memory
+}
+
+NewMachine --> SystemReady
+
+state "System ready" as SystemReady {
+    SystemReady : symlinks OK
+    SystemReady : memory synced
+}
+
+SystemReady --> SessionActive : memory-pull
+
+state "Session active" as SessionActive {
+    [*] --> Working
+    Working --> Working : add-repo.sh\n(add repo to system)
+}
+
+SessionActive --> MemorySynced : with Claude active\nsemantic commit\ngit tag stable-*\ngit push
+
+SessionActive --> MemorySynced : without Claude\nmemory-push\ngit tag memory-stable-YYYY-MM-DD
+
+state "Memory synced" as MemorySynced {
+    MemorySynced : commits on remote
+    MemorySynced : recovery tag created
+}
+
+MemorySynced --> SessionActive : memory-pull\n(next session)
+
+MemorySynced --> MemorySynced : recovery\ngit checkout <tag> -- projects/.../memory/
+
+state "Validation" as Validation {
+    [*] --> Checking
+    Checking : memory-check
+    Checking --> AllOK : [OK]
+    Checking --> Fixing : [WARN] / [ERROR]
+    Fixing : setup-claude-symlinks.sh
+    Fixing : git clone <missing repo>
+    Fixing : manual MEMORY.md edit
+    Fixing --> AllOK
+    AllOK --> [*]
+}
+
+SystemReady -[dashed]-> Validation
+SessionActive -[dashed]-> Validation
+MemorySynced -[dashed]-> Validation
+Validation -[dashed]-> SystemReady
+Validation -[dashed]-> SessionActive
+
+note right of Validation
+  Run at any time:
+  after a problem,
+  after reinstall, or when
+  something behaves unexpectedly.
+end note
+
+@enduml

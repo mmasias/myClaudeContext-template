@@ -10,6 +10,8 @@
 
 Template for syncing Claude Code and Gemini CLI context across multiple machines using symlinks and git. Once set up, both agents start with the same context on any machine.
 
+![Rituals diagram](modelosUML/rituals.png)
+
 > **Background.** This system was born from analyzing three structural problems with AI agent memory: contaminated memory, stale memory, and incomplete memory. If you want to understand the motivation before using the tool, the articles are in [`docs/`](docs/losTresProblemas.md).
 
 ---
