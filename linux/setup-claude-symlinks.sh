@@ -3,6 +3,12 @@
 REPO=~/misRepos/myClaudeContext
 PROYECTOS_DIR=~/misRepos/proyectos
 
+# Ensure MACHINE_ID.md is in .gitignore
+if ! grep -q "MACHINE_ID.md" "$REPO/.gitignore"; then
+    echo "MACHINE_ID.md" >> "$REPO/.gitignore"
+    echo "Added MACHINE_ID.md to .gitignore"
+fi
+
 # Ensure ~/.claude exists before creating symlinks
 mkdir -p ~/.claude
 

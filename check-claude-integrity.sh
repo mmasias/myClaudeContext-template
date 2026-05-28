@@ -74,19 +74,22 @@ check_common() {
     fi
 
     # Repo state vs remote
-    git -C "$REPO" fetch --quiet 2>/dev/null
-    local_ref=$(git -C "$REPO" rev-parse @ 2>/dev/null)
-    remote_ref=$(git -C "$REPO" rev-parse @{u} 2>/dev/null)
-    base_ref=$(git -C "$REPO" merge-base @ @{u} 2>/dev/null)
+    if git -C "$REPO" fetch --quiet 2>/dev/null; then
+        local_ref=$(git -C "$REPO" rev-parse @ 2>/dev/null)
+        remote_ref=$(git -C "$REPO" rev-parse @{u} 2>/dev/null)
+        base_ref=$(git -C "$REPO" merge-base @ @{u} 2>/dev/null)
 
-    if [ "$local_ref" = "$remote_ref" ]; then
-        ok "Repo in sync with remote"
-    elif [ "$local_ref" = "$base_ref" ]; then
-        warn "Repo is BEHIND remote — pull before continuing"
-    elif [ "$remote_ref" = "$base_ref" ]; then
-        warn "Repo is AHEAD of remote — unpushed commits exist"
+        if [ "$local_ref" = "$remote_ref" ]; then
+            ok "Repo in sync with remote"
+        elif [ "$local_ref" = "$base_ref" ]; then
+            warn "Repo is BEHIND remote — pull before continuing"
+        elif [ "$remote_ref" = "$base_ref" ]; then
+            warn "Repo is AHEAD of remote — unpushed commits exist"
+        else
+            err "Repo DIVERGED from remote — manual resolution required"
+        fi
     else
-        err "Repo DIVERGED from remote — manual resolution required"
+        warn "No connection to remote — sync check skipped"
     fi
 
     # MEMORY.md integrity for all projects
@@ -100,6 +103,13 @@ check_common() {
         project=$(basename "$(dirname "$memory_dir")")
 
         project_errors=0
+
+        # Check if MEMORY.md has any real entries
+        entry_count=$(grep -c '^\- \[' "$memory_file" 2>/dev/null)
+        if [ "$entry_count" -eq 0 ]; then
+            warn "[$project] MEMORY.md has no entries — consider archiving"
+            project_errors=$((project_errors + 1))
+        fi
 
         # References in MEMORY.md that don't exist on disk
         while IFS= read -r ref; do
@@ -120,7 +130,7 @@ check_common() {
                 project_errors=$((project_errors + 1))
             fi
         done
-        [ $project_errors -eq 0 ] && ok "[$project] MEMORY.md is intact"
+        [ $project_errors -eq 0 ] && ok "[$project] MEMORY.md is intact ($entry_count entries)"
     done
     $found_any || warn "No MEMORY.md found in projects/"
 }

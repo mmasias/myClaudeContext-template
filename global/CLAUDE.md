@@ -17,6 +17,12 @@ Las instrucciones marcadas con `[Solo Gemini]` aplican exclusivamente a Gemini C
 - Cada unidad de texto debe introducir información nueva o un paso lógico necesario.
 - Registro directo y técnicamente preciso. La claridad tiene prioridad absoluta sobre cualquier consideración tonal.
 
+## [Solo Claude Code] Rutina de inicio de sesión
+- Leer `~/.claude/machine-id.md` si existe — identifica en qué máquina está corriendo esta sesión.
+- Leer el CLAUDE.md del proyecto y la memoria disponible.
+- Contrastar con el estado real del repo (git status, estructura de archivos) antes de asumir nada.
+- Si hay discrepancia entre memoria y estado real, priorizar lo que dice el repo.
+
 ## [Solo Claude Code] Permisos y autonomía
 - Ejecutar herramientas sin pedir confirmación para acciones rutinarias.
 - Ante ambigüedad de **ejecución**: asumir la interpretación más probable, ejecutar, informar la asunción.
