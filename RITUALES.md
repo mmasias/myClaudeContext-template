@@ -139,3 +139,22 @@ Evaluates repos with memory in `projects/` and issues a verdict for each:
 Clones the repo into `~/misRepos/proyectos/<name>`, adds it to the manifest, and regenerates symlinks. Then close the session normally (ritual 3 or 4) to sync the manifest.
 
 On other machines: `memory-pull` + `./linux/setup-claude-symlinks.sh` (or `macos/`).
+
+---
+
+## 9. Maturity evaluation (biannual)
+
+Different from the periodic audit (ritual 7, which evaluates activity per repo): this evaluates the whole system — memory content and tooling — with fresh eyes. Dedicated session, not mixed with other work.
+
+1. Standard startup + `memory-check`.
+2. Inventory of `projects/*/memory/` across the whole repo (not just the active project): files by age, pruning candidates.
+3. Tooling inventory (`memory-push`, `memory-pull`, `memory-audit`, `check-claude-integrity.sh`, `linux/`/`macos/` wrappers): real usage, whether their logic still fits the current repo structure, documentation up to date.
+4. If it hasn't run this quarter, run `memory-audit` (ritual 7); if already recent, reference its result.
+5. Contrast with the previous evaluation, kept in a memory file dedicated to this evaluation's own history — not folded into an architecture/evolution document that belongs to a different subsystem. Did its weaknesses get resolved? Does its continuity verdict still hold?
+6. New strengths and weaknesses: growth, recurring errors, gaps between what's documented and what's actually used.
+7. Verdict and prioritized action plan, same format as the previous evaluation.
+8. Persist as a new dated section in that dedicated memory file, and close with ritual 3.
+
+> **Lesson:** if the file from step 5 ever ends up covering an unrelated subsystem's own architecture decisions (an orchestration layer's evolution, say), split them apart. A ritual instruction that points at a file scoped to a since-retired architectural premise will silently misfile every future evaluation, because nobody thinks to re-check ritual instructions when an architecture decision changes elsewhere. When a premise gets retired, grep its name across `RITUALES.md` and the scripts before moving on.
+
+First run: informal, before this ritual existed. Cadence from then on: every six months.
