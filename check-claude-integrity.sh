@@ -135,6 +135,38 @@ check_common() {
     $found_any || warn "No MEMORY.md found in projects/"
 }
 
+check_secrets() {
+    echo ""
+    echo "=== Secret scan ==="
+
+    # High-confidence patterns by recognizable shape — not generic
+    # "password"/"token" matches, since memory legitimately discusses
+    # credentials in the abstract without exposing their value.
+    local patterns=(
+        'sk-[A-Za-z0-9_-]{20,}:OpenAI/Anthropic-style key'
+        'AKIA[0-9A-Z]{16}:AWS access key ID'
+        'AIza[0-9A-Za-z_-]{35}:Google API key'
+        'ghp_[A-Za-z0-9]{36}:GitHub personal access token'
+        'xox[baprs]-[0-9A-Za-z-]+:Slack token'
+        '-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----:private key'
+    )
+
+    local found=0
+    for entry in "${patterns[@]}"; do
+        local pattern="${entry%%:*}"
+        local label="${entry#*:}"
+        while IFS=: read -r file line; do
+            [ -z "$file" ] && continue
+            warn "Possible secret ($label) in ${file#$REPO/}:$line"
+            found=$((found + 1))
+        # -o expands to filename:line:match; the match (the possible secret
+        # itself) is discarded via cut so it never reaches this check's own log.
+        done < <(grep -noP "$pattern" "$REPO"/projects/*/memory/*.md 2>/dev/null | cut -d: -f1,2)
+    done
+
+    [ "$found" -eq 0 ] && ok "No secret patterns detected in memory"
+}
+
 check_linux() {
     echo ""
     echo "=== Linux checks ==="
@@ -281,6 +313,7 @@ echo "======================================"
 
 check_manifest
 check_common
+check_secrets
 
 if [[ "$(uname)" == "Darwin" ]]; then
     check_macos
