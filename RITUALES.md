@@ -34,13 +34,14 @@ Verifies minimum integrity (symlinks, remote state) before syncing. Aborts with 
 
 ## 3. Session end with Claude active
 
-Claude generates the commit, the semantic tag, and pushes:
+Claude generates the commit, the semantic tag, runs the secret scan, and pushes:
 
 ```bash
 # Claude runs:
 git add <modified files>
 git commit -m "type(scope): semantic description"
 git tag "stable-<verb-subject-kebab-case>"
+./check-claude-integrity.sh   # check the "Secret scan" section — if it reports a finding, stop and fix it before pushing
 git push
 git push origin "refs/tags/stable-<description>" --force
 ```
