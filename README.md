@@ -13,6 +13,8 @@
 
 Every new machine means re-teaching your coding agent who you are — your stack, your conventions, the decisions you already made last week. Claude Code, Gemini CLI, Kiro CLI, and OpenCode don't share memory across machines by default: what one machine learns stays on that machine, invisible to the others, until it silently drifts into different versions of "how I work" per tool and per machine.
 
+One shared identity for Claude Code, Gemini CLI, Kiro CLI, and OpenCode — plain files, symlinks, and git. Every change to what your agent knows about you is a commit; every stable point is a tag you can roll back to.
+
 <div align=right>
 
 ||
@@ -20,8 +22,6 @@ Every new machine means re-teaching your coding agent who you are — your stack
 |<sub><i>This repository is Claude Code's identity substrate:<br>the machine is replaceable, the context is not.<br>Like [SOMA](https://es.wikipedia.org/wiki/Soma_(videojuego)), but without the philosophical dilemma.<br></i></sub>
 
 </div>
-
-One shared identity for Claude Code, Gemini CLI, Kiro CLI, and OpenCode — plain files, symlinks, and git. Every change to what your agent knows about you is a commit; every stable point is a tag you can roll back to.
 
 ![Rituals diagram](modelosUML/rituals.png)
 
