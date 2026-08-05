@@ -21,7 +21,7 @@ Every new machine means re-teaching your coding agent who you are — your stack
 
 </div>
 
-Template for syncing Claude Code, Gemini CLI, Kiro CLI, and OpenCode context across multiple machines using symlinks and git. Once set up, every agent starts with the same context on any machine.
+One shared identity for Claude Code, Gemini CLI, Kiro CLI, and OpenCode — plain files, symlinks, and git. Every change to what your agent knows about you is a commit; every stable point is a tag you can roll back to.
 
 ![Rituals diagram](modelosUML/rituals.png)
 
