@@ -11,7 +11,7 @@
 
 > **Scope:** multi-machine context sync for a single user — not shared team memory.
 
-Every new machine means re-teaching your coding agent who you are — your stack, your conventions, the decisions you already made last week. Claude Code and Gemini CLI don't share memory across machines by default: what one machine learns stays on that machine, invisible to the others, until it silently drifts into three different versions of "how I work."
+Every new machine means re-teaching your coding agent who you are — your stack, your conventions, the decisions you already made last week. Claude Code, Gemini CLI, Kiro CLI, and OpenCode don't share memory across machines by default: what one machine learns stays on that machine, invisible to the others, until it silently drifts into different versions of "how I work" per tool and per machine.
 
 <div align=right>
 
@@ -31,9 +31,9 @@ Template for syncing Claude Code, Gemini CLI, Kiro CLI, and OpenCode context acr
 
 ## The problem it solves
 
-Claude Code and Gemini CLI store their context in local files:
+Claude Code, Gemini CLI, Kiro CLI, and OpenCode each store their context in local files:
 
-- `~/.claude/CLAUDE.md` / `~/.gemini/GEMINI.md` — global behavior instructions
+- `~/.claude/CLAUDE.md` / `~/.gemini/GEMINI.md` / `~/.kiro/steering/context.md` / `~/.config/opencode/AGENTS.md` — global behavior instructions
 - `~/.claude/projects/` — per-project memory (decisions, session state, notes)
 
 By default, that context lives only on the local machine. When working across multiple machines, each one accumulates its own version that evolves independently. This repository fixes that divergence.
@@ -46,7 +46,7 @@ By default, that context lives only on the local machine. When working across mu
 |---|---|
 | Manual copy-paste of `CLAUDE.md` between machines | No enforcement — drifts silently, no history, no way to tell which machine is "correct" |
 | Automatic memory curation (background hooks + pattern extraction) | Convenient, but typically single-tool, single-machine, and opaque about why a fact was kept or dropped |
-| This repo | Requires git discipline and consistent paths across machines; in exchange, gets full history, an explicit audit trail, and one shared context for both Claude Code and Gemini CLI |
+| This repo | Requires git discipline and consistent paths across machines; in exchange, gets full history, an explicit audit trail, and one shared context across every supported agent |
 
 This system optimizes for auditability over automation: every change to memory is a git commit, every stable state is a tag, nothing is written or forgotten without leaving a trace.
 
@@ -141,7 +141,7 @@ myClaudeContext/
 
 The actual files live in this repository. On each machine, symlinks point to them from the locations each tool expects.
 
-Both agents share the same physical file per level. Sections marked `[Claude Code only]` and `[Gemini only]` in `global/CLAUDE.md` allow agent-specific instructions without duplicating files.
+All agents share the same physical file per level. Sections marked `[Claude Code only]`, `[Gemini only]`, etc. in `global/CLAUDE.md` allow agent-specific instructions without duplicating files.
 
 ---
 
@@ -168,7 +168,7 @@ PROYECTOS_DIR=~/misRepos/proyectos   # location of your projects
 memory-check
 ```
 
-Verifies Claude and Gemini symlinks, remote state, indexed memory consistency, and Linux/macOS path correspondence. Output is `[OK]` / `[WARN]` / `[ERROR]` per check. Exit code = number of errors.
+Verifies Claude, Gemini, Kiro, and OpenCode symlinks, remote state, indexed memory consistency, and Linux/macOS path correspondence. Output is `[OK]` / `[WARN]` / `[ERROR]` per check. Exit code = number of errors.
 
 **When to run it:** after a problem, after installing on a new machine, or when something behaves unexpectedly.
 
