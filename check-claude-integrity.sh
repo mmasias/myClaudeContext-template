@@ -64,6 +64,40 @@ check_common() {
         warn "~/.gemini/GEMINI.md does not exist — run setup-claude-symlinks.sh"
     fi
 
+    # ~/.kiro/steering/context.md is a valid symlink pointing to global/CLAUDE.md
+    if [ -L ~/.kiro/steering/context.md ] && [ -f ~/.kiro/steering/context.md ]; then
+        actual_target=$(readlink -f ~/.kiro/steering/context.md)
+        expected_target=$(readlink -f "$REPO/global/CLAUDE.md")
+        if [ "$actual_target" = "$expected_target" ]; then
+            ok "~/.kiro/steering/context.md is a valid symlink -> $actual_target"
+        else
+            err "~/.kiro/steering/context.md points to unexpected location: $actual_target (expected: $expected_target)"
+        fi
+    elif [ -L ~/.kiro/steering/context.md ]; then
+        err "~/.kiro/steering/context.md is a BROKEN symlink -> $(readlink ~/.kiro/steering/context.md)"
+    elif [ -f ~/.kiro/steering/context.md ]; then
+        warn "~/.kiro/steering/context.md is a real file (should be a symlink) — run setup-claude-symlinks.sh"
+    else
+        warn "~/.kiro/steering/context.md does not exist — run setup-claude-symlinks.sh"
+    fi
+
+    # ~/.config/opencode/AGENTS.md is a valid symlink pointing to global/CLAUDE.md
+    if [ -L ~/.config/opencode/AGENTS.md ] && [ -f ~/.config/opencode/AGENTS.md ]; then
+        actual_target=$(readlink -f ~/.config/opencode/AGENTS.md)
+        expected_target=$(readlink -f "$REPO/global/CLAUDE.md")
+        if [ "$actual_target" = "$expected_target" ]; then
+            ok "~/.config/opencode/AGENTS.md is a valid symlink -> $actual_target"
+        else
+            err "~/.config/opencode/AGENTS.md points to unexpected location: $actual_target (expected: $expected_target)"
+        fi
+    elif [ -L ~/.config/opencode/AGENTS.md ]; then
+        err "~/.config/opencode/AGENTS.md is a BROKEN symlink -> $(readlink ~/.config/opencode/AGENTS.md)"
+    elif [ -f ~/.config/opencode/AGENTS.md ]; then
+        warn "~/.config/opencode/AGENTS.md is a real file (should be a symlink) — run setup-claude-symlinks.sh"
+    else
+        warn "~/.config/opencode/AGENTS.md does not exist — run setup-claude-symlinks.sh"
+    fi
+
     # Excluded files that should not be tracked in git
     tracked=$(git -C "$REPO" ls-files -- '*.jsonl' 'projects/**/*.json' 'projects/**/*.txt' 2>/dev/null)
     if [ -z "$tracked" ]; then
@@ -223,6 +257,23 @@ check_linux() {
             else
                 warn "[$proyecto] GEMINI.md NOT in .gitignore — risk of exposing local path"
             fi
+
+            # Kiro: .kiro/steering/context.md symlink
+            kiro_link="$dir/.kiro/steering/context.md"
+            if [ -L "$kiro_link" ] && [ -f "$kiro_link" ]; then
+                ok "[$proyecto] .kiro/steering/context.md valid symlink"
+            elif [ -L "$kiro_link" ]; then
+                err "[$proyecto] .kiro/steering/context.md BROKEN symlink -> $(readlink "$kiro_link")"
+            else
+                warn "[$proyecto] .kiro/steering/context.md missing symlink — run setup-claude-symlinks.sh"
+            fi
+
+            # Kiro: .kiro/ in .gitignore
+            if git -C "$dir" check-ignore -q .kiro 2>/dev/null; then
+                ok "[$proyecto] .kiro/ in .gitignore"
+            else
+                warn "[$proyecto] .kiro/ NOT in .gitignore — risk of exposing local context"
+            fi
         done
     else
         warn "$PROYECTOS_DIR does not exist — project checks skipped"
@@ -298,6 +349,23 @@ check_macos() {
                 ok "[$proyecto] GEMINI.md in .gitignore"
             else
                 warn "[$proyecto] GEMINI.md NOT in .gitignore — risk of exposing local path"
+            fi
+
+            # Kiro: .kiro/steering/context.md symlink
+            kiro_link="$dir/.kiro/steering/context.md"
+            if [ -L "$kiro_link" ] && [ -f "$kiro_link" ]; then
+                ok "[$proyecto] .kiro/steering/context.md valid symlink"
+            elif [ -L "$kiro_link" ]; then
+                err "[$proyecto] .kiro/steering/context.md BROKEN symlink -> $(readlink "$kiro_link")"
+            else
+                warn "[$proyecto] .kiro/steering/context.md missing symlink — run setup-claude-symlinks.sh"
+            fi
+
+            # Kiro: .kiro/ in .gitignore
+            if git -C "$dir" check-ignore -q .kiro 2>/dev/null; then
+                ok "[$proyecto] .kiro/ in .gitignore"
+            else
+                warn "[$proyecto] .kiro/ NOT in .gitignore — risk of exposing local context"
             fi
         done
     else

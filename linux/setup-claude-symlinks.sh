@@ -28,6 +28,32 @@ elif [ -d ~/.gemini/GEMINI.md ]; then
 fi
 ln -sf $REPO/global/CLAUDE.md ~/.gemini/GEMINI.md
 
+# Global — Kiro CLI
+mkdir -p ~/.kiro/steering
+if [ -L ~/.kiro/steering/context.md ]; then
+    rm ~/.kiro/steering/context.md
+elif [ -f ~/.kiro/steering/context.md ]; then
+    mv ~/.kiro/steering/context.md ~/.kiro/steering/context.md.bak
+    echo "Backed up existing ~/.kiro/steering/context.md -> context.md.bak"
+elif [ -d ~/.kiro/steering/context.md ]; then
+    echo "[ERROR] ~/.kiro/steering/context.md is a directory — manual resolution required"
+    exit 1
+fi
+ln -sf $REPO/global/CLAUDE.md ~/.kiro/steering/context.md
+
+# Global — OpenCode
+mkdir -p ~/.config/opencode
+if [ -L ~/.config/opencode/AGENTS.md ]; then
+    rm ~/.config/opencode/AGENTS.md
+elif [ -f ~/.config/opencode/AGENTS.md ]; then
+    mv ~/.config/opencode/AGENTS.md ~/.config/opencode/AGENTS.md.bak
+    echo "Backed up existing ~/.config/opencode/AGENTS.md -> AGENTS.md.bak"
+elif [ -d ~/.config/opencode/AGENTS.md ]; then
+    echo "[ERROR] ~/.config/opencode/AGENTS.md is a directory — manual resolution required"
+    exit 1
+fi
+ln -sf $REPO/global/CLAUDE.md ~/.config/opencode/AGENTS.md
+
 # Projects and Claude Code internal memory
 if [ -L ~/.claude/projects ]; then
     rm ~/.claude/projects
@@ -72,12 +98,22 @@ for dir in "$PROYECTOS_DIR"/*/; do
         echo "Added GEMINI.md to $proyecto/.gitignore"
     fi
 
-    # Create symlinks — Claude and Gemini point to the same file
+    # Ensure .kiro/ is in .gitignore
+    if ! grep -qx ".kiro/" "$dir/.gitignore" 2>/dev/null; then
+        [ -s "$dir/.gitignore" ] && [ "$(tail -c1 "$dir/.gitignore" | wc -l)" -eq 0 ] && echo "" >> "$dir/.gitignore"
+        echo ".kiro/" >> "$dir/.gitignore"
+        echo "Added .kiro/ to $proyecto/.gitignore"
+    fi
+
+    # Create symlinks — Claude, Gemini and Kiro point to the same file
     mkdir -p "$dir/.claude"
     ln -sf $REPO/proyectos/$proyecto/CLAUDE.md \
            "$dir/.claude/CLAUDE.md"
     ln -sf $REPO/proyectos/$proyecto/CLAUDE.md \
            "$dir/GEMINI.md"
+    mkdir -p "$dir/.kiro/steering"
+    ln -sf $REPO/proyectos/$proyecto/CLAUDE.md \
+           "$dir/.kiro/steering/context.md"
 done
 
 # Execution permissions for sync scripts

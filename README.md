@@ -19,7 +19,7 @@ Every new machine means re-teaching your coding agent who you are — your stack
 
 </div>
 
-Template for syncing Claude Code and Gemini CLI context across multiple machines using symlinks and git. Once set up, both agents start with the same context on any machine.
+Template for syncing Claude Code, Gemini CLI, Kiro CLI, and OpenCode context across multiple machines using symlinks and git. Once set up, every agent starts with the same context on any machine.
 
 ![Rituals diagram](modelosUML/rituals.png)
 
@@ -112,11 +112,13 @@ The scripts create symlinks in `~/.local/bin/` pointing to the correct platform 
 ```
 myClaudeContext/
 ├── global/
-│   └── CLAUDE.md              <- ~/.claude/CLAUDE.md and ~/.gemini/GEMINI.md
+│   └── CLAUDE.md              <- ~/.claude/CLAUDE.md, ~/.gemini/GEMINI.md,
+│                                  ~/.kiro/steering/context.md, ~/.config/opencode/AGENTS.md
 ├── proyectos/
 │   ├── CLAUDE.md              <- ~/misRepos/proyectos/CLAUDE.md
 │   └── <project>/
-│       └── CLAUDE.md          <- <project>/.claude/CLAUDE.md and <project>/GEMINI.md
+│       └── CLAUDE.md          <- <project>/.claude/CLAUDE.md, <project>/GEMINI.md,
+│                                  <project>/.kiro/steering/context.md
 ├── projects/                  <- ~/.claude/projects/ (project memory)
 ├── linux/
 │   ├── setup-claude-symlinks.sh
@@ -224,7 +226,19 @@ Each agent loads its instructions in order, from most general to most specific:
 ~/misRepos/proyectos/<project>/GEMINI.md         -> per-project context (same file as Claude)
 ```
 
-Project files are excluded via `.gitignore` (`.claude/` and `GEMINI.md`) so they are not published to GitHub.
+**Kiro CLI:**
+```
+~/.kiro/steering/context.md                                    -> global behavior (same file as Claude)
+~/misRepos/proyectos/<project>/.kiro/steering/context.md        -> per-project context (same file as Claude)
+```
+
+**OpenCode:**
+```
+~/.config/opencode/AGENTS.md                     -> global behavior (same file as Claude)
+```
+OpenCode natively supports `AGENTS.md` with a project -> global -> Claude Code fallback cascade, so only the global file is synced here — a project-level `AGENTS.md` is left for the project itself to own, not overwritten by this system.
+
+Project files are excluded via `.gitignore` (`.claude/`, `GEMINI.md`, and `.kiro/`) so they are not published to GitHub.
 
 ---
 
