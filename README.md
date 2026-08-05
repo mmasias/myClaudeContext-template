@@ -1,5 +1,12 @@
 # myClaudeContext — template
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Shell: Bash](https://img.shields.io/badge/Shell-Bash-4EAA25?logo=gnubash&logoColor=white)](.)
+[![Git](https://img.shields.io/badge/-Git-F05032?logo=git&logoColor=white)](.)
+[![Platform: Linux | macOS](https://img.shields.io/badge/platform-Linux%20%7C%20macOS-informational)](.)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-5A45FF)](.)
+[![Gemini CLI](https://img.shields.io/badge/Gemini%20CLI-compatible-4285F4)](.)
+
 > **Scope:** multi-machine context sync for a single user — not shared team memory.
 
 Every new machine means re-teaching your coding agent who you are — your stack, your conventions, the decisions you already made last week. Claude Code and Gemini CLI don't share memory across machines by default: what one machine learns stays on that machine, invisible to the others, until it silently drifts into three different versions of "how I work."
