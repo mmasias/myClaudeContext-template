@@ -14,7 +14,7 @@ chmod +x ~/misRepos/myClaudeContext/bootstrap.sh
 ~/misRepos/myClaudeContext/bootstrap.sh
 ```
 
-`bootstrap.sh` handles everything: cloning repos from the manifest, creating symlinks (Claude Code and Gemini CLI), and syncing memory. When done, launch Claude Code or Gemini CLI.
+`bootstrap.sh` handles everything: cloning repos from the manifest, creating symlinks (Claude Code, Gemini CLI, Kiro CLI, OpenCode), and syncing memory. When done, launch any of the supported agents.
 
 > **Critical:** Claude Code must not be launched before bootstrap finishes. If it starts first, it creates `~/.claude/projects/` as a real directory and the symlinks end up broken. Fix: run `setup-claude-symlinks.sh` again.
 
@@ -79,7 +79,7 @@ When to run it: after a problem, after a reinstall, or when something behaves un
 
 | Error | Action |
 |---|---|
-| Broken or mispointed symlink (Claude or Gemini) | `./linux/setup-claude-symlinks.sh` (or `macos/`) |
+| Broken or mispointed symlink (Claude, Gemini, Kiro, OpenCode) | `./linux/setup-claude-symlinks.sh` (or `macos/`) |
 | Repo missing from manifest | The check outputs the exact `git clone` command |
 | Broken reference in MEMORY.md | Manual file edit |
 | `.jsonl/.json/.txt` files tracked in git | `git rm --cached <file>` |
