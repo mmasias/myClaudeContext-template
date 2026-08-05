@@ -19,7 +19,7 @@ One shared identity for Claude Code, Gemini CLI, Kiro CLI, and OpenCode — plai
 
 ||
 |-
-|<sub><i>This repository is Claude Code's identity substrate:<br>the machine is replaceable, the context is not.<br>Like [SOMA](https://es.wikipedia.org/wiki/Soma_(videojuego)), but without the philosophical dilemma.<br></i></sub>
+|<sub><i>This repository is your agent's identity substrate:<br>the machine is replaceable, the context is not.<br>Like [SOMA](https://es.wikipedia.org/wiki/Soma_(videojuego)), but without the philosophical dilemma.<br></i></sub>
 
 </div>
 
