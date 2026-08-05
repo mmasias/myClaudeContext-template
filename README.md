@@ -1,5 +1,9 @@
 # myClaudeContext — template
 
+> **Scope:** multi-machine context sync for a single user — not shared team memory.
+
+Every new machine means re-teaching your coding agent who you are — your stack, your conventions, the decisions you already made last week. Claude Code and Gemini CLI don't share memory across machines by default: what one machine learns stays on that machine, invisible to the others, until it silently drifts into three different versions of "how I work."
+
 <div align=right>
 
 ||
@@ -27,54 +31,15 @@ By default, that context lives only on the local machine. When working across mu
 
 ---
 
-## Structure
+## Alternatives considered
 
-```
-myClaudeContext/
-├── global/
-│   └── CLAUDE.md              <- ~/.claude/CLAUDE.md and ~/.gemini/GEMINI.md
-├── proyectos/
-│   ├── CLAUDE.md              <- ~/misRepos/proyectos/CLAUDE.md
-│   └── <project>/
-│       └── CLAUDE.md          <- <project>/.claude/CLAUDE.md and <project>/GEMINI.md
-├── projects/                  <- ~/.claude/projects/ (project memory)
-├── linux/
-│   ├── setup-claude-symlinks.sh
-│   ├── pull-claude-context.sh
-│   └── push-claude-context.sh
-├── macos/
-│   ├── setup-claude-symlinks.sh
-│   ├── pull-claude-context.sh
-│   └── push-claude-context.sh
-├── bootstrap.sh               <- full setup for a new machine (cross-platform)
-├── add-repo.sh                <- add a new project to the system (cross-platform)
-├── check-claude-integrity.sh  <- integrity validation (cross-platform)
-├── memory-audit.sh            <- audit inactive repos (cross-platform)
-├── manifiesto.txt             <- repos that must exist in the system
-├── RITUALS.md                 <- complete ritual reference
-└── docs/                      <- motivation and system analysis
-```
+| Approach | Trade-off |
+|---|---|
+| Manual copy-paste of `CLAUDE.md` between machines | No enforcement — drifts silently, no history, no way to tell which machine is "correct" |
+| Automatic memory curation (background hooks + pattern extraction) | Convenient, but typically single-tool, single-machine, and opaque about why a fact was kept or dropped |
+| This repo | Requires git discipline and consistent paths across machines; in exchange, gets full history, an explicit audit trail, and one shared context for both Claude Code and Gemini CLI |
 
-The actual files live in this repository. On each machine, symlinks point to them from the locations each tool expects.
-
-Both agents share the same physical file per level. Sections marked `[Claude Code only]` and `[Gemini only]` in `global/CLAUDE.md` allow agent-specific instructions without duplicating files.
-
----
-
-## Prerequisite: consistency across machines
-
-This system depends on maintaining the same directory structure and username on all machines.
-
-> *Want order? Be orderly.*
-
-If on one machine projects live in `~/misRepos/proyectos/` and on another in `~/Documents/projects/`, symlinks will point to non-existent paths and the system will fail silently — no warnings, no obvious errors.
-
-The structure must be decided before starting and kept consistent. Configure it by editing the two variables at the top of each script:
-
-```bash
-REPO=~/misRepos/myClaudeContext      # location of this repository
-PROYECTOS_DIR=~/misRepos/proyectos   # location of your projects
-```
+This system optimizes for auditability over automation: every change to memory is a git commit, every stable state is a tag, nothing is written or forgotten without leaving a trace.
 
 ---
 
@@ -132,6 +97,57 @@ After running `bootstrap.sh` or `setup-claude-symlinks.sh`, the following comman
 The scripts create symlinks in `~/.local/bin/` pointing to the correct platform version.
 
 > **macOS:** verify that `~/.local/bin` is in `$PATH`. Homebrew does not add it by default. Add to `.zshrc`: `export PATH="$HOME/.local/bin:$PATH"`
+
+---
+
+## Structure
+
+```
+myClaudeContext/
+├── global/
+│   └── CLAUDE.md              <- ~/.claude/CLAUDE.md and ~/.gemini/GEMINI.md
+├── proyectos/
+│   ├── CLAUDE.md              <- ~/misRepos/proyectos/CLAUDE.md
+│   └── <project>/
+│       └── CLAUDE.md          <- <project>/.claude/CLAUDE.md and <project>/GEMINI.md
+├── projects/                  <- ~/.claude/projects/ (project memory)
+├── linux/
+│   ├── setup-claude-symlinks.sh
+│   ├── pull-claude-context.sh
+│   └── push-claude-context.sh
+├── macos/
+│   ├── setup-claude-symlinks.sh
+│   ├── pull-claude-context.sh
+│   └── push-claude-context.sh
+├── bootstrap.sh               <- full setup for a new machine (cross-platform)
+├── add-repo.sh                <- add a new project to the system (cross-platform)
+├── check-claude-integrity.sh  <- integrity validation (cross-platform)
+├── memory-audit.sh            <- audit inactive repos (cross-platform)
+├── manifiesto.txt             <- repos that must exist in the system
+├── RITUALS.md                 <- complete ritual reference
+└── docs/                      <- motivation and system analysis
+```
+
+The actual files live in this repository. On each machine, symlinks point to them from the locations each tool expects.
+
+Both agents share the same physical file per level. Sections marked `[Claude Code only]` and `[Gemini only]` in `global/CLAUDE.md` allow agent-specific instructions without duplicating files.
+
+---
+
+## Prerequisite: consistency across machines
+
+This system depends on maintaining the same directory structure and username on all machines.
+
+> *Want order? Be orderly.*
+
+If on one machine projects live in `~/misRepos/proyectos/` and on another in `~/Documents/projects/`, symlinks will point to non-existent paths and the system will fail silently — no warnings, no obvious errors.
+
+The structure must be decided before starting and kept consistent. Configure it by editing the two variables at the top of each script:
+
+```bash
+REPO=~/misRepos/myClaudeContext      # location of this repository
+PROYECTOS_DIR=~/misRepos/proyectos   # location of your projects
+```
 
 ---
 
