@@ -6,6 +6,8 @@
 [![Platform: Linux | macOS](https://img.shields.io/badge/platform-Linux%20%7C%20macOS-informational)](.)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-5A45FF)](.)
 [![Gemini CLI](https://img.shields.io/badge/Gemini%20CLI-compatible-4285F4)](.)
+[![Kiro CLI](https://img.shields.io/badge/Kiro%20CLI-compatible-7B61FF)](.)
+[![OpenCode](https://img.shields.io/badge/OpenCode-compatible-000000)](.)
 
 > **Scope:** multi-machine context sync for a single user — not shared team memory.
 
